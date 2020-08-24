@@ -2,7 +2,7 @@
 #BE WARNED this will alter Power BI files so please make sure you know what you are doing, and always back up your files!
 #This is not supported by Microsoft and changes to future file structures could cause this code to break
 
-#--------------- Released 8/11/2020 ---------------
+#--------------- Released 8/23/2020 ---------------
 #--- By Steve Campbell provided by PowerBI.tips --
 
 
@@ -14,14 +14,22 @@
 
 ################################################################################
 
+
+
+ 
+
 #Current Version
-$version = '1.0'
+$version = '1.1.0'
+
 
 
 #Check for update
 $response = Invoke-WebRequest -URI https://raw.githubusercontent.com/PowerBISteve/powerbiscripts/master/versionhistory
 if ($response.Content -ne $version){
 
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
 $updater = New-Object System.Windows.Forms.Form
 $updater.Text = 'Update Available'
 $updater.Size = New-Object System.Drawing.Size(350,200)
@@ -68,8 +76,8 @@ exit
 ################################################################################
 
 #Input arguments from Power BI
-$port = $args[0]
-$cat = $args[1]
+$port = $args[1]
+$cat = $args[2]
 
 
 
@@ -88,9 +96,10 @@ Function Disconnect-PBIX([string]$inputpath){
     $zipfile = ($inputpath).Substring(0,($inputpath).Length-4) + "zip"
     Rename-Item -Path $inputpath -NewName  $zipfile
     $zip =  [System.IO.Compression.ZipFile]::Open($zipfile,"Update")
+    $contents = $zip.Entries.Where({$_.name -eq 'DataModel'})
 
-    $zip.Entries.Where({$_.name -eq 'SecurityBindings'}) | % { $_.Delete() }
-    $zip.Entries.Where({$_.name -eq 'Connections'}) | % { $_.Delete() }
+    $zip.Entries.Where({$_.name -eq 'SecurityBindings'}) | % { $_.Delete() } -ErrorAction SilentlyContinue
+    $zip.Entries.Where({$_.name -eq 'Connections'}) | % { $_.Delete() } -ErrorAction SilentlyContinue
 
     # Write the changes and close the zip file
     $zip.Dispose()
@@ -98,6 +107,15 @@ Function Disconnect-PBIX([string]$inputpath){
     Rename-Item -Path $zipfile -NewName $inputpath  
     Invoke-Item $inputpath  
 }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -111,25 +129,47 @@ Function Connect-PBIX([string]$inputpath){
     $zipfile = ($inputpath).Substring(0,($inputpath).Length-4) + "zip"
     Rename-Item -Path $inputpath -NewName  $zipfile
     $zip =  [System.IO.Compression.ZipFile]::Open($zipfile,"Update")
-    $contents = $zip.Entries.Where({$_.name -eq 'Connections'})
 
-    # Update the contents of the file
+
+    $contents = $zip.Entries.Where({$_.name -eq 'Connections'})
+    if ($contents.Count -gt 0 ){
+    
+    # Overwrite the contents file
+   
     $desiredFile = [System.IO.StreamWriter]($contents).Open()
     $desiredFile.BaseStream.SetLength(0)
     $desiredFile.Write($ConStr)
     $desiredFile.Flush()
     $desiredFile.Close()
 
-    $zip.Entries.Where({$_.name -eq 'SecurityBindings'}) | % { $_.Delete() }
+    }
+
+    else
+    {
+
+    # Create new contents file and add it
+    $TempPath =$env:USERPROFILE + "\temp\HotSwap\"
+
+    If(!(test-path $TempPath))
+    {New-Item -ItemType Directory -Force -Path $TempPath}
+    $NewConFile = $TempPath + '\Connections'
+    if (Test-Path $NewConFile) { Remove-Item $NewConFile}
+    New-Item -Path $TempPath -Name "Connections" -ItemType "file" -Value $ConStr -Force
+    
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip,$NewConFile,"Connections","Optimal") | Out-Null
+    
+    Remove-Item  $NewConFile
+    }
+
+
+    $zip.Entries.Where({$_.name -eq 'SecurityBindings'}) | % { $_.Delete() } -ErrorAction SilentlyContinue
 
     # Write the changes and close the zip file
     $zip.Dispose()
 
     Rename-Item -Path $zipfile -NewName $inputpath  
     Invoke-Item $inputpath  
- 
-}
-
+    }
 
 
 #Choose pbix funtion
@@ -158,14 +198,32 @@ Function Pick-PBIX(){
         exit } 
 
     elseif ( IsFileLocked($pathn) ){
+        [System.Windows.MessageBox]::Show('File is already open - please close and try again')
         exit } 
 
     else{ $pathn}
 }
 #Final pick and copy function
 Function Pick-Copy-PBIX([string]$suffix){
-       $pathn = Pick-PBIX
+       try {$pathn = Get-FileName}
+       catch { "Incompatible File" }
+
        $pathnnew = ($pathn).toString().Replace('.pbix', $suffix + '.pbix')
+
+       if ( [string]::IsNullOrEmpty($pathnnew) -Or (Test-Path $pathnnew) ){
+           DO{
+
+             $nn +=1
+             $pathnnew = ($pathnnew).Substring(0,($pathnnew).Length-5) + "(" + ($nn) +  ").pbix"
+             if (Test-Path $pathnnew)
+               {$pass = 0}
+             else
+               {$pass = 1}
+             } Until ($pass -eq 1)}
+       else
+           {}
+
+
        Copy-Item $pathn -Destination $pathnnew  -Force
        return $pathnnew
 }
@@ -288,7 +346,7 @@ $linkLabel1.Size = New-Object System.Drawing.Size(237, 13)
 $linkLabel1.TabIndex = 3
 $linkLabel1.TabStop = $true
 $linkLabel1.Text = "Click here for the documentation on PowerBI.tips"
-$LinkLabel2.add_Click({[system.Diagnostics.Process]::start("https://powerbi.tips/2020/08/hot-swap-report-connections-external-tools")})
+$LinkLabel2.add_Click({[system.Diagnostics.Process]::start("https://powerbi.tips/2020/08/hot-swap-report-connections-external-tools/")})
 #
 # tabPage2
 #

@@ -25,7 +25,7 @@ $version = '1.1.0'
 
 #Check for update
 $response = Invoke-WebRequest -URI https://raw.githubusercontent.com/PowerBISteve/powerbiscripts/master/versionhistory
-if ($response.Content -ne $version){
+if ($response.Content.Trim() -ne $version.Trim()){
 
 
 Add-Type -AssemblyName System.Windows.Forms

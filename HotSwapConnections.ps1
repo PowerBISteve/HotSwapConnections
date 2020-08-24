@@ -76,8 +76,8 @@ exit
 ################################################################################
 
 #Input arguments from Power BI
-$port = $args[1]
-$cat = $args[2]
+$port = $args[0]
+$cat = $args[1]
 
 
 

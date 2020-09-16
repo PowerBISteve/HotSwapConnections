@@ -3,8 +3,6 @@
 Full guide:
 https://powerbi.tips/2020/08/hot-swap-report-connections-external-tools/
 
-Download using the business ops installer:
-https://powerbi.tips/product/business-ops-beta/
 
 
 After installing the tool, click external tools the Hot Swap Connections to launch.

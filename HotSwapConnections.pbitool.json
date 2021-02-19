@@ -1,6 +1,6 @@
 {
 	"version": "1.1.0",
-    "name": " Hot Swap Connections",
+	"name": " Hot Swap Connections",
 	"description": "Connect a live report or remove live connections from a report",
 	"path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
 	"arguments": "-WindowStyle Hidden -executionpolicy bypass -file C:\\temp\\HotSwapConnections.ps1 \"%server%\" \"%database%\"",

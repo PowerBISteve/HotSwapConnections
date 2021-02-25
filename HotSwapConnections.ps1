@@ -19,7 +19,7 @@
  
 
 #Current Version
-$version = '1.1.0'
+$version = '1.1.1'
 
 
 
@@ -188,25 +188,37 @@ function IsFileLocked([string]$filePath){
     Rename-Item $filePath $filePath -ErrorVariable errs -ErrorAction SilentlyContinue
     return ($errs.Count -ne 0)
 }
+
 #Final pick function
 Function Pick-PBIX(){
     try {$pathn = Get-FileName}
     catch { "Incompatible File" }
 
+
     #Check for errors
     If([string]::IsNullOrEmpty($pathn )){            
-        exit } 
+       Return  } 
 
     elseif ( IsFileLocked($pathn) ){
         [System.Windows.MessageBox]::Show('File is already open - please close and try again')
-        exit } 
+        Return 
+         } 
 
     else{ $pathn}
 }
+
 #Final pick and copy function
 Function Pick-Copy-PBIX([string]$suffix){
        try {$pathn = Get-FileName}
        catch { "Incompatible File" }
+
+    #Check for errors
+    If([string]::IsNullOrEmpty($pathn )){            
+        Return  } 
+
+    elseif ( IsFileLocked($pathn) ){
+        [System.Windows.MessageBox]::Show('File is already open - please close and try again')
+        Return  } 
 
        $pathnnew = ($pathn).toString().Replace('.pbix', $suffix + '.pbix')
 
@@ -486,34 +498,47 @@ $HotSwap.Text = "Hot Swap Report Connections"
 #####Add functions to buttons
 $con_cop.Add_Click({
 $inputpth = Pick-Copy-PBIX $textBox1.Text
+If([string]::IsNullOrEmpty($inputpth ))
+{Return} 
+else
+{
 Connect-PBIX $inputpth
 $HotSwap.Close()
-})
+}})
 
 $con_ovr.Add_Click({
 $inputpth = Pick-PBIX
+If([string]::IsNullOrEmpty($inputpth ))
+{Return} 
+else{
 Connect-PBIX $inputpth
 $HotSwap.Close()
-})
+}})
 
 $reml_ovr.Add_Click({
 $inputpth = Pick-PBIX
+If([string]::IsNullOrEmpty($inputpth ))
+{Return} 
+else{
 Disconnect-PBIX $inputpth
 $HotSwap.Close()
-})
+}})
 
 $reml_cop.Add_Click({
 $inputpth = Pick-Copy-PBIX $textBox1.Text
+If([string]::IsNullOrEmpty($inputpth ))
+{Return} 
+else{
 Disconnect-PBIX $inputpth
 $HotSwap.Close()
-})
+}})
 
 function OnFormClosing_HotSwap{ 
 	# $this parameter is equal to the sender (object)
 	# $_ is equal to the parameter e (eventarg)
 
 	# The CloseReason property indicates a reason for the closure :
-	#   if (($_).CloseReason -eq [System.Windows.Forms.CloseReason]::UserClosing)
+	 # if (($_).CloseReason -eq [System.Windows.Forms.CloseReason]::UserClosing)
 
 	#Sets the value indicating that the event should be canceled.
 	($_).Cancel= $False
@@ -522,7 +547,7 @@ function OnFormClosing_HotSwap{
 $HotSwap.Add_FormClosing( { OnFormClosing_HotSwap} )
 
 $HotSwap.Add_Shown({$HotSwap.Activate()})
-$ModalResult=$HotSwap.ShowDialog()
+$ModalResult=[system.windows.forms.application]::run($HotSwap) #.ShowDialog()
 
 # Release the Form
 $HotSwap.Dispose()

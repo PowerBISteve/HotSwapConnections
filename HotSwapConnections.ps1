@@ -358,7 +358,7 @@ $linkLabel1.Size = New-Object System.Drawing.Size(237, 13)
 $linkLabel1.TabIndex = 3
 $linkLabel1.TabStop = $true
 $linkLabel1.Text = "Click here for the documentation on PowerBI.tips"
-$LinkLabel2.add_Click({[system.Diagnostics.Process]::start("https://powerbi.tips/2020/08/hot-swap-report-connections-external-tools/")})
+$LinkLabel1.add_Click({[system.Diagnostics.Process]::start("https://powerbi.tips/2020/08/hot-swap-report-connections-external-tools/")})
 #
 # tabPage2
 #

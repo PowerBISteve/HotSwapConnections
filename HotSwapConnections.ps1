@@ -364,7 +364,7 @@ $label5.Name = "label5"
 $label5.Size = New-Object System.Drawing.Size(237, 13)
 $label5.Font = New-Object System.Drawing.Font("Microsoft Sans Serif", 7.5)
 $label5.TabIndex = 5
-$label5.Text = "Hot Swap Report Connections —— Version " + $version
+$label5.Text = "Hot Swap Report Connections Version " + $version
 #
 # warnlabel
 #

@@ -27,9 +27,8 @@ Function Open-HelpPage() {
 }
 
 #Check for update
-$response = Invoke-WebRequest -URI https://raw.githubusercontent.com/PowerBISteve/powerbiscripts/master/versionhistory
-if ($response.Content.Trim() -ne $version.Trim()) {
-
+$response = Invoke-WebRequest -URI https://raw.githubusercontent.com/PowerBISteve/HotSwapConnections/master/versionhistory
+if ($response.Content.Trim() -gt $version.Trim()) {
 
     Add-Type -AssemblyName System.Windows.Forms
     Add-Type -AssemblyName System.Drawing
@@ -59,7 +58,6 @@ if ($response.Content.Trim() -ne $version.Trim()) {
     $label.Size = New-Object System.Drawing.Size(250, 120)
     $label.Text = 'There is a new update available on PowerBI.tips. Please update to maintain functionality.'
     $updater.Controls.Add($label)
-
 
     $updater.Topmost = $true
     $result = $updater.ShowDialog()

@@ -370,7 +370,7 @@ $warnlabel.Location = New-Object System.Drawing.Point(3, 150)
 $warnlabel.Name = "warnlabel"
 $warnlabel.Size = New-Object System.Drawing.Size(255, 50)
 $warnlabel.TabIndex = 0
-$warnlabel.Text = "THIS MODIFIES FILES IN A WAY UNSOPPORTED BY MICROSOFT. ALWAYS BACK UP ALL FILES."
+$warnlabel.Text = "THIS MODIFIES FILES IN A WAY UNSUPPORTED BY MICROSOFT.`nALWAYS BACK UP ALL FILES."
 
 
 
@@ -378,7 +378,7 @@ $warnlabel1.Location = New-Object System.Drawing.Point(3, 150)
 $warnlabel1.Name = "warnlabel1"
 $warnlabel1.Size = New-Object System.Drawing.Size(250, 50)
 $warnlabel1.TabIndex = 9
-$warnlabel1.Text = "THIS MODIFIES FILES IN A WAY UNSOPPORTED BY MICROSOFT. ALWAYS BACK UP ALL FILES."
+$warnlabel1.Text = "THIS MODIFIES FILES IN A WAY UNSUPPORTED BY MICROSOFT.`nALWAYS BACK UP ALL FILES."
 #
 # tabPage2
 #

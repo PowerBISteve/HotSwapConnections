@@ -19,7 +19,7 @@
 
 
 #Current Version
-$version = '1.1.2'
+$version = '1.1.3'
 
 # Help Page
 Function Open-HelpPage() {
@@ -27,9 +27,8 @@ Function Open-HelpPage() {
 }
 
 #Check for update
-$response = Invoke-WebRequest -URI https://raw.githubusercontent.com/PowerBISteve/powerbiscripts/master/versionhistory
-if ($response.Content.Trim() -ne $version.Trim()) {
-
+$response = Invoke-WebRequest -URI https://raw.githubusercontent.com/PowerBISteve/HotSwapConnections/master/versionhistory
+if ($response.Content.Trim() -gt $version.Trim()) {
 
     Add-Type -AssemblyName System.Windows.Forms
     Add-Type -AssemblyName System.Drawing
@@ -59,7 +58,6 @@ if ($response.Content.Trim() -ne $version.Trim()) {
     $label.Size = New-Object System.Drawing.Size(250, 120)
     $label.Text = 'There is a new update available on PowerBI.tips. Please update to maintain functionality.'
     $updater.Controls.Add($label)
-
 
     $updater.Topmost = $true
     $result = $updater.ShowDialog()
@@ -359,12 +357,12 @@ $LinkLabel1.add_Click({ Open-HelpPage })
 # label5
 #
 $label5.AutoSize = $true
-$label5.Location = New-Object System.Drawing.Point(1, 140)
+$label5.Location = New-Object System.Drawing.Point(40, 193)
 $label5.Name = "label5"
-$label5.Size = New-Object System.Drawing.Size(237, 13)
+$label5.Size = New-Object System.Drawing.Size(250, 50)
 $label5.Font = New-Object System.Drawing.Font("Microsoft Sans Serif", 7.5)
 $label5.TabIndex = 5
-$label5.Text = "Hot Swap Report Connections Version " + $version
+$label5.Text = "Hot Swap Report Connections -- Version " + $version + " "
 #
 # warnlabel
 #
